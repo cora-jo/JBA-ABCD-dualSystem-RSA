@@ -1,0 +1,77 @@
+    TITLE:wide_mplus_multi_data2;
+    DATA:
+       ! enter the name of the data set
+       FILE = wide_mplus_multi_ksads_data7.csv;
+
+    ANALYSIS: BOOTSTRAP=2000;
+              !estimator=MLR;
+    VARIABLE:
+       !wide_mplus_multi_ksads_data7:
+       NAMES = id age2 age3 age4 sex inc2 inc3 inc4 edu pvg2 pvg3	pvg4 spvg12 spvg13
+        spvg14 spvg22
+       spvg23 spvg24 spvg32 spvg33 spvg34 spvg42 spvg43 spvg44 spvg52 spvg53 spvg54
+        spvg62
+       spvg63 spvg64 adhd2 adhd3 adhd4 sadhd12 sadhd13 sadhd14 sadhd22 sadhd23 sadhd24
+       sadhd32 sadhd33 sadhd34 sadhd42 sadhd43 sadhd44 sadhd52 sadhd53 sadhd54 sadhd62
+       sadhd63 sadhd64 sadhd72 sadhd73 sadhd74 kadhd2 kadhd3 kadhd4 ic2 ic3 ic4 rs2 rs3
+       rs4 rs12 rs13 rs14 rs22 rs23 rs24 rs32 rs33 rs34 rs42 rs43 rs44 rs52	
+       rs53 rs54
+       rs62 rs63 rs64	rs72 rs73 rs74 rs82 rs83 rs84 rs92 rs93 rs94	rs102 rs103 rs104
+       rs112	rs113 rs114 rs122	rs123 rs124 mdd2 mdd3 mdd4 ocd2 ocd3 ocd4 dpvg2 dpvg3
+       dpvg4	rs2z ic2z rs4z ic4z imb2 imb4;
+
+       MISSING = ALL (-999);
+
+      
+       !final pvg adhd ic rs model，file：4vari_2tp_wide_mplus_multi_ksads_data7 非测量模型:
+       USEVARIABLE = age2 sex inc2 inc4 edu adhd2 adhd4 ic2 ic4 rs2 rs4
+       pvg2 pvg4 mdd2 ocd2;
+
+ !final pvg adhd model，file：2vari_2tp_wide_mplus_multi_ksads_data7 非测量模型:
+ !      USEVARIABLE = age2 sex inc2 inc4 edu adhd2 adhd4 
+  !     pvg2 pvg4 mdd2 ocd2;
+
+    MODEL:
+  
+           !2024/11/14final pvg adhd ic rs model
+          pvg2 on age2 sex inc2 edu mdd2 ocd2;
+          pvg4 on rs2(p01);
+          pvg4 on pvg2 adhd2 ic2 age2 sex inc4 edu mdd2 ocd2;
+          
+          ic2 on age2 sex inc2 edu mdd2 ocd2;
+          ic4 on rs2 (p02);
+          ic4 on adhd2(p03);
+          ic4 on ic2 pvg2 age2 sex inc4 edu mdd2 ocd2;
+          
+          rs2 on age2 sex inc2 edu mdd2 ocd2;
+          rs4 on ic2(p20);
+          rs4 on pvg2(p10);
+          rs4 on rs2 adhd2 age2 sex inc4 edu mdd2 ocd2;
+
+          adhd2 on age2 sex inc2 edu mdd2 ocd2;
+          adhd4 on ic2(p30);
+          adhd4 on adhd2 pvg2 rs2 age2 sex inc4 edu mdd2 ocd2;
+          
+
+          pvg2 with ic2 rs2 adhd2;
+          ic2 with rs2 adhd2;
+          rs2 with adhd2;
+          pvg4 with ic4 rs4 adhd4;
+          ic4 with rs4 adhd4;
+          rs4 with adhd4;
+  
+  
+   !2024/11/14final pvg adhd 2wave model
+   !       pvg2 on age2 sex inc2 edu mdd2 ocd2;
+   !       pvg4 on pvg2 adhd2 age2 inc4 sex edu mdd2 ocd2;
+          
+          
+   !       adhd2 on age2 sex inc2 edu mdd2 ocd2;
+   !       adhd4 on adhd2 pvg2 age2 inc4 sex edu mdd2 ocd2;
+          
+
+   !       pvg2 with adhd2;
+    !      pvg4 with adhd4;
+          
+
+    OUTPUT: STDYX MOD MODINDICES CINTERVAL(BOOTSTRAP) tech1 tech4;
